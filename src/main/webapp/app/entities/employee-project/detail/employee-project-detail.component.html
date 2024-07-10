@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (employeeProject()) {
+      <div>
+        <h2 data-cy="employeeProjectDetailsHeading"><span>Employee Project</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ employeeProject()!.id }}</span>
+          </dd>
+          <dt><span>Date From</span></dt>
+          <dd>
+            <span>{{ employeeProject()!.dateFrom | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Date To</span></dt>
+          <dd>
+            <span>{{ employeeProject()!.dateTo | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Employee</span></dt>
+          <dd>
+            @if (employeeProject()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', employeeProject()!.employee?.id, 'view']">{{ employeeProject()!.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span>Project</span></dt>
+          <dd>
+            @if (employeeProject()!.project) {
+              <div>
+                <a [routerLink]="['/project', employeeProject()!.project?.id, 'view']">{{ employeeProject()!.project?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/employee-project', employeeProject()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

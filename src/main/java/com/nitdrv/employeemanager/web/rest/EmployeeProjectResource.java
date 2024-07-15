@@ -3,11 +3,13 @@ package com.nitdrv.employeemanager.web.rest;
 import com.nitdrv.employeemanager.repository.EmployeeProjectRepository;
 import com.nitdrv.employeemanager.service.EmployeeProjectService;
 import com.nitdrv.employeemanager.service.dto.EmployeeProjectDTO;
+import com.nitdrv.employeemanager.service.dto.EmployeesPairWithCommonProjectsPeriodDTO;
 import com.nitdrv.employeemanager.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -178,5 +180,27 @@ public class EmployeeProjectResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code GET  /employee-projects/emp-pairs-with-longest-periods-on-common-projects : get the
+     * employee pairs with longest periods working on common projects
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of EmployeesPairWithCommonProjectsPeriodDTOs}.
+     */
+    @GetMapping("/emp-pairs-with-longest-periods-on-common-projects")
+    public ResponseEntity<?> getEmployeePairsWithLongestPeriodsWorkingOnCommonProjects() {
+        log.debug("REST request to get EmployeeProject : {}");
+
+        //        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        //        return ResponseEntity.ok().headers(headers).body(page.getContent());
+
+        //        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        List<EmployeesPairWithCommonProjectsPeriodDTO> result = new ArrayList<>();
+        result = employeeProjectService.findPairsWithLongestPeriodsOnCommonProjects();
+        if (result.isEmpty()) {
+            return (ResponseEntity<?>) ResponseEntity.notFound();
+        }
+        return ResponseEntity.ok().body(result);
     }
 }

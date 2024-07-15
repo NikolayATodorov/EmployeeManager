@@ -16,7 +16,6 @@ public class EmployeeProjectDTO implements Serializable {
     @NotNull
     private Instant dateFrom;
 
-    @NotNull
     private Instant dateTo;
 
     @NotNull

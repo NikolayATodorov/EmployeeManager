@@ -4,7 +4,10 @@ import com.nitdrv.employeemanager.domain.EmployeeProject;
 import com.nitdrv.employeemanager.repository.EmployeeProjectRepository;
 import com.nitdrv.employeemanager.service.EmployeeProjectService;
 import com.nitdrv.employeemanager.service.dto.EmployeeProjectDTO;
+import com.nitdrv.employeemanager.service.dto.EmployeesPairWithCommonProjectsPeriodDTO;
 import com.nitdrv.employeemanager.service.mapper.EmployeeProjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,8 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
     private final EmployeeProjectRepository employeeProjectRepository;
 
     private final EmployeeProjectMapper employeeProjectMapper;
+
+    //    private final EmployeesPairWithCommonProjectsPeriodRepository еmployeesPairWithCommonProjectsPeriodRepository;
 
     public EmployeeProjectServiceImpl(EmployeeProjectRepository employeeProjectRepository, EmployeeProjectMapper employeeProjectMapper) {
         this.employeeProjectRepository = employeeProjectRepository;
@@ -73,6 +78,7 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
     @Transactional(readOnly = true)
     public Optional<EmployeeProjectDTO> findOne(Long id) {
         log.debug("Request to get EmployeeProject : {}", id);
+        findPairsWithLongestPeriodsOnCommonProjects();
         return employeeProjectRepository.findById(id).map(employeeProjectMapper::toDto);
     }
 
@@ -81,4 +87,32 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
         log.debug("Request to delete EmployeeProject : {}", id);
         employeeProjectRepository.deleteById(id);
     }
+
+    public List<EmployeesPairWithCommonProjectsPeriodDTO> findPairsWithLongestPeriodsOnCommonProjects() {
+        log.debug("Request to find Employees pairs with longest periods spent working on common projects" + "(in descending order) : {}");
+        List<EmployeesPairWithCommonProjectsPeriodDTO> list = employeeProjectRepository.findPairsWithLongestPeriodsOnCommonProjects();
+        if (list == null && list.isEmpty()) {
+            return list;
+        }
+        List<EmployeesPairWithCommonProjectsPeriodDTO> result = new ArrayList<>();
+        result.add(list.remove(0));
+        // if multiple pairs with the same max period - return them all
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                if (result.get(i).getTotal_overlap_days() == list.get(i).getTotal_overlap_days()) {
+                    result.add(list.get(i));
+                } else break;
+            }
+        }
+        for (EmployeesPairWithCommonProjectsPeriodDTO el : list) {
+            System.out.println(el.toString());
+        }
+        return result;
+    }
+    //    public EmployeesPairWithCommonProjectsPeriodDTO getPair() {
+    //        log.debug("Request to find Employees pair with longest periods spent working on common projects : {}");
+    //        EmployeesPairWithCommonProjectsPeriodDTO pair = employeeProjectRepository.findPairWithLongestPeriodsOnCommonProjects();
+    //        System.out.println(pair.toString());
+    //        return pair;
+    //    }
 }

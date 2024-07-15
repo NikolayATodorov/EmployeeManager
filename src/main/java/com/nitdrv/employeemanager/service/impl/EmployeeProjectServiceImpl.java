@@ -6,6 +6,7 @@ import com.nitdrv.employeemanager.service.EmployeeProjectService;
 import com.nitdrv.employeemanager.service.dto.EmployeeProjectDTO;
 import com.nitdrv.employeemanager.service.dto.EmployeesPairWithCommonProjectsPeriodDTO;
 import com.nitdrv.employeemanager.service.mapper.EmployeeProjectMapper;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +79,6 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
     @Transactional(readOnly = true)
     public Optional<EmployeeProjectDTO> findOne(Long id) {
         log.debug("Request to get EmployeeProject : {}", id);
-        findPairsWithLongestPeriodsOnCommonProjects();
         return employeeProjectRepository.findById(id).map(employeeProjectMapper::toDto);
     }
 
@@ -99,7 +99,7 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
         // if multiple pairs with the same max period - return them all
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
-                if (result.get(i).getTotal_overlap_days() == list.get(i).getTotal_overlap_days()) {
+                if (result.get(i).getTotal_overlap_days().intValue() == list.get(i).getTotal_overlap_days().intValue()) {
                     result.add(list.get(i));
                 } else break;
             }
@@ -109,10 +109,56 @@ public class EmployeeProjectServiceImpl implements EmployeeProjectService {
         }
         return result;
     }
+
+    @Override
+    public Optional<EmployeeProjectDTO> findByDateFromAndDateToAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    ) {
+        Optional<EmployeeProject> ep = employeeProjectRepository.findByDateFromAndDateToAndEmployeeIdAndProjectId(
+            dateFrom,
+            dateTo,
+            employeeId,
+            projectId
+        );
+        return ep.map(employeeProjectMapper::toDto);
+    }
+
+    @Override
+    public Optional<EmployeeProjectDTO> findByDateFromBetweenAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    ) {
+        return employeeProjectRepository
+            .findByDateFromBetweenAndEmployeeIdAndProjectId(dateFrom, dateTo, employeeId, projectId)
+            .map(employeeProjectMapper::toDto);
+    }
+
+    @Override
+    public Optional<EmployeeProjectDTO> findByDateToBetweenAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    ) {
+        return employeeProjectRepository
+            .findByDateToBetweenAndEmployeeIdAndProjectId(dateFrom, dateTo, employeeId, projectId)
+            .map(employeeProjectMapper::toDto);
+    }
+    //    @Override
+    //    public Optional<EmployeeProjectDTO> findByDateFromBetweenOrDateToBetweenAndEmployeeIdAndProjectId(Instant dateFrom, Instant dateTo, Long employeeId, Long projectId) {
+    //        return employeeProjectRepository.findByDateFromBetweenOrDateToBetweenAndEmployeeIdAndProjectId(dateFrom, dateTo, employeeId, projectId).map(employeeProjectMapper::toDto);
+    //    }
+
     //    public EmployeesPairWithCommonProjectsPeriodDTO getPair() {
     //        log.debug("Request to find Employees pair with longest periods spent working on common projects : {}");
     //        EmployeesPairWithCommonProjectsPeriodDTO pair = employeeProjectRepository.findPairWithLongestPeriodsOnCommonProjects();
     //        System.out.println(pair.toString());
     //        return pair;
     //    }
+
 }

@@ -2,6 +2,7 @@ package com.nitdrv.employeemanager.service;
 
 import com.nitdrv.employeemanager.service.dto.EmployeeProjectDTO;
 import com.nitdrv.employeemanager.service.dto.EmployeesPairWithCommonProjectsPeriodDTO;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -59,4 +60,67 @@ public interface EmployeeProjectService {
     void delete(Long id);
 
     List<EmployeesPairWithCommonProjectsPeriodDTO> findPairsWithLongestPeriodsOnCommonProjects();
+
+    /**
+     * Get the employeeProject.
+     *
+     * @param dateFrom the dateFrom of the entity.
+     * @param dateTo the dateTo of the entity.
+     * @param employeeId the employeeId of the entity.
+     * @param projectId the projectId of the entity.
+     *
+     * @return the entity.
+     */
+    Optional<EmployeeProjectDTO> findByDateFromAndDateToAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    );
+
+    /**
+     * Get the employeeProject.
+     *
+     * @param dateFrom the dateFrom of the entity.
+     * @param dateTo the dateTo of the entity.
+     * @param employeeId the employeeId of the entity.
+     * @param projectId the projectId of the entity.
+     *
+     * @return the entity.
+     */
+    Optional<EmployeeProjectDTO> findByDateFromBetweenAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    );
+
+    /**
+     * Get the employeeProject.
+     *
+     * @param dateFrom the dateFrom of the entity.
+     * @param dateTo the dateTo of the entity.
+     * @param employeeId the employeeId of the entity.
+     * @param projectId the projectId of the entity.
+     *
+     * @return the entity.
+     */
+    Optional<EmployeeProjectDTO> findByDateToBetweenAndEmployeeAndProject(
+        Instant dateFrom,
+        Instant dateTo,
+        Long employeeId,
+        Long projectId
+    );
+    //    /**
+    //     * Get the employeeProject.
+    //     *
+    //     * @param dateFrom the dateFrom of the entity.
+    //     * @param dateTo the dateTo of the entity.
+    //     * @param employeeId the employeeId of the entity.
+    //     * @param projectId the projectId of the entity.
+    //     *
+    //     * @return the entity.
+    //     */
+    //    Optional<EmployeeProjectDTO> findByDateFromBetweenOrDateToBetweenAndEmployeeAndProject(Instant dateFrom, Instant dateTo, Long employeeId, Long projectId);
+
 }

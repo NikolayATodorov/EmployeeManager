@@ -247,15 +247,13 @@ public class EmployeeProjectResource {
         while (sc.hasNextLine()) {
             lineCounter++;
             String nextLine = sc.nextLine();
-            System.out.println(nextLine);
-
             // validate line
-            //            String[] values = nextLine.split(COMMA_DELIMITER);
+            // String[] values = nextLine.split(COMMA_DELIMITER);
             String[] values = nextLine.split(",");
             if (values.length != 4) {
                 // add line to the list of lines with wrong format
                 throw new BadRequestAlertException(
-                    "Wrong date format for DateFrom  " + " on line " + lineCounter + " !",
+                    "Wrong line on line " + lineCounter + " ! Expected comma separated values: " + "EmpID, ProjectID, DateFrom, DateTo",
                     ENTITY_NAME,
                     "wronglineformat"
                 );
